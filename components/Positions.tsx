@@ -7,14 +7,38 @@ import useQuotes from './hooks/useQuotes';
 function Positions() {
 
   let { state,dispatch} = useContext(PositionContext);
-  const {stopLosses,targets} = state;
+  const {stopLosses,targets,optionTypesState,transactionTypesState} = state;
 
   // const {depth} = useQuotes(state.positions);
   
   // console.log(1,depth);  
-  
+  let filteredPositions = state.positions.filter(item=>{
+    if(optionTypesState?.ce && optionTypesState?.pe){
+      return true
+    }
+    if(optionTypesState?.ce){
+      return item.tradingsymbol.indexOf('CE')>-1
+    }
+    if(optionTypesState?.pe){
+      return item.tradingsymbol.indexOf('PE')>-1
+    }
+    
+    return true;
+  }).filter(item=>{
+    if(transactionTypesState?.buy && transactionTypesState?.sell){
+      return true;
+    }
+    if(transactionTypesState?.buy){
+      return item.quantity>0
+    }
+    if(transactionTypesState?.sell){
+      return item.quantity<0
+    }
+    return true;
+  })
 
-  let positions = state.filteredPositions?.map(item => {
+
+  let positions = filteredPositions?.map(item => {
     let stoploss = stopLosses?.[item.tradingsymbol];
     let target = targets?.[item.tradingsymbol];
     let hasStoplossHit;

@@ -39,7 +39,7 @@ function notifyMe(msg, { onClick }) {
 export default function OptionTrader() {
 
   const { state, dispatch } = React.useContext(PositionContext);
-  const [shouldRun, setShouldRun] = React.useState(false)
+  const [shouldRun, setShouldRun] = React.useState(true)
   let { stopLosses, targets,positions } = state;
 
   
@@ -72,15 +72,20 @@ export default function OptionTrader() {
         if (stoploss?.change) {
           if(Number(stoploss?.change) < Number(item.change)){
             stoplossHit.push(item.tradingsymbol)
-          } else if (stoploss.trailStoploss &&  Number(stoploss?.change) - Number(item.change) > 5) {
+          } else if (stoploss.trailStoploss &&  Number(stoploss?.change) - Number(item.change) > 10) {
             hasStoplossUpdated = true
-            let newValue = Math.floor(Number(item.change) + 5);
-            console.log('updating stoploss', item.tradingsymbol, {
-              old: stoploss.change,
-              newValue
-            });
-            stoploss.change = newValue
-            stoploss.value = position.average_price + position.average_price * newValue / 100;
+            let newValue = Math.floor(Number(item.change) + 10);
+
+            if(newValue < stoploss.change){
+
+              console.log('updating stoploss', item.tradingsymbol, {
+                old: stoploss.change,
+                newValue
+              });
+              
+              stoploss.change = newValue
+              stoploss.value = position.average_price + position.average_price * newValue / 100;
+            }
           }
         }
         
@@ -120,32 +125,38 @@ export default function OptionTrader() {
   useEffect(() => {
     let stopLosses = getItem('stopLosses');
     let targets = getItem('targets');
-    dispatch && dispatch({
-      type: PositionActions.SET_STOPLOSSES,
-      payload: stopLosses
-    })
-    dispatch && dispatch({
-      type: PositionActions.SET_TARGETS,
-      payload: targets
-    });
+    if(stopLosses){
+      dispatch && dispatch({    
+        type: PositionActions.SET_STOPLOSSES,
+        payload: stopLosses
+      })
+    }
+    if(targets){
+      dispatch && dispatch({
+        type: PositionActions.SET_TARGETS,
+        payload: targets
+      });
+    }
   }, [])
 
   const updatePositions  = React.useCallback(async()=>{
     let res = await fetch('/api/positions').then(res=>res.json())
-    let positions = res.data.net.map((item)=>{return {
-      ...item,
-      change:((item.last_price-item.average_price)/item.average_price*100).toFixed(2)
-    }})
-    dispatch && dispatch({
-      type:PositionActions.SET_POSITIONS,
-      payload:positions
-    })
+    if(res.data){
+      let positions = res.data.net.filter(item=>item.product=='NRML' && item.quantity!=0).map((item)=>{return {
+        ...item,
+        change:((item.last_price-item.average_price)/item.average_price*100).toFixed(2)
+      }})
+      dispatch && dispatch({
+        type:PositionActions.SET_POSITIONS,
+        payload:positions
+      })
+    }else{
+      console.error(res);
+    }
   },[])
 
   useEffect(()=>{
-    
     let id = setInterval(()=>{
-      console.log(12,shouldRun);
       if(shouldRun){
         updatePositions();
         handleTriggerClick();

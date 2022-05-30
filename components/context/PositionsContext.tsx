@@ -49,9 +49,17 @@ export type Target = {
 type ProviderValue = {
   state: {
     positions: Position[],
-    filteredPositions:Position[]
     stopLosses: {[key:string]:Stoploss},
     targets:{[key:string]:Target},
+    optionTypesState?:{
+      pe:boolean,
+      ce:boolean
+    },
+    transactionTypesState?:{
+      buy:boolean,
+      sell:boolean
+    }
+
   },
   dispatch?: ({
     type: PositionActions,
@@ -69,7 +77,6 @@ export enum PositionActions {
 let PositionContext = React.createContext<ProviderValue>({
   state: {
     positions: [],
-    filteredPositions:[],
     stopLosses:{},
     targets:{}
   }
@@ -87,34 +94,10 @@ function reducerFn(state:ProviderValue["state"], action):ProviderValue["state"] 
     }
     case PositionActions.SET_POSITION_FILTERS:{
 
-      let filteredPositions = state.positions.filter(item=>{
-        if(action.payload.optionTypes?.ce && action.payload.optionTypes?.pe){
-          return true
-        }
-        if(action.payload.optionTypes?.ce){
-          return item.tradingsymbol.indexOf('CE')>-1
-        }
-        if(action.payload.optionTypes?.pe){
-          return item.tradingsymbol.indexOf('PE')>-1
-        }
-        
-        return true;
-      }).filter(item=>{
-        if(action.payload.transactionTypes?.buy && action.payload.transactionTypes?.sell){
-          return true;
-        }
-        if(action.payload.transactionTypes?.buy){
-          return item.quantity>0
-        }
-        if(action.payload.transactionTypes?.sell){
-          return item.quantity<0
-        }
-        return true;
-      })
-
       return {
         ...state,
-        filteredPositions
+        optionTypesState:action.payload.optionTypes,
+        transactionTypesState:action.payload.transactionTypes
       }   
     }
     case PositionActions.SET_STOPLOSSES:{
@@ -139,13 +122,12 @@ function reducerFn(state:ProviderValue["state"], action):ProviderValue["state"] 
 
 
 export function PositionsProvder({ children, initialValue }) {
-  let positions = initialValue.data.net.map((item)=>{return {
+  let positions = initialValue.data.net.filter(item=>item.product=='NRML' && item.quantity!=0).map((item)=>{return {
     ...item,
     change:((item.last_price-item.average_price)/item.average_price*100).toFixed(2)
   }})
   const [state, dispatch] = useReducer(reducerFn, {
     positions: positions,
-    filteredPositions: positions,
     targets:{},
     stopLosses:{}
   });
