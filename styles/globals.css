@@ -4,6 +4,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-weight: 300;
 }
 
 a {
@@ -13,4 +14,50 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+
+
+.footer {
+  margin-top:20px;
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.filter-block {
+  border: 1px solid #dee2e6;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.table {
+  border-radius: 5px;
+}
+
+thead th {
+  font-size: 14px;
+
+}
+
+input {
+  border: 1px solid #dee2e6;
+  outline: none;
+  border-radius: 2px;
+  width: 100px;
 }
