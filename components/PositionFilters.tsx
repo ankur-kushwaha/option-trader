@@ -64,12 +64,13 @@ export function PositionFilters() {
   useEffect(() => {
     let positionsFilters = getItem('positionFilters')
     console.log('positionsFilters', positionsFilters);
-
-    setFilters(positionsFilters);
-    dispatch && dispatch({
-      type: PositionActions.SET_POSITION_FILTERS,
-      payload: positionsFilters
-    });
+    if(positionsFilters){
+      setFilters(positionsFilters);  
+      dispatch && dispatch({
+        type: PositionActions.SET_POSITION_FILTERS,
+        payload: positionsFilters
+      });
+    }
   }, [])
 
   let transactionTypeOptions = [{ name: "Buy", value: "buy", selected: false }, { name: "Sell", "value": "sell", selected: false }]
