@@ -75,9 +75,12 @@ type UseQuoteResponse = {
   }
 }
 
-export default function useQuotes(instruments: Instrument[]): UseQuoteResponse {
+export default function useQuotes(instruments): UseQuoteResponse {
 
-  const [quotes,setQuotes] = React.useState({});
+  const [quotes,setQuotes] = React.useState({
+    out:{},
+    depth:{}
+  });
 
   React.useEffect(()=>{
     async function getQuotes(){
