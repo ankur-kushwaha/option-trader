@@ -72,7 +72,7 @@ export default function OptionTrader() {
         if (stoploss?.change) {
           if(Number(stoploss?.change) < Number(item.change)){
             stoplossHit.push(item.tradingsymbol)
-          } else if (stoploss.trailStoploss &&  Number(stoploss?.change) - Number(item.change) > 10) {
+          } else if (stoploss.trailStoploss != undefined &&  Number(stoploss?.change) - Number(item.change) > 10) {
             hasStoplossUpdated = true
             let newValue = Math.floor(Number(item.change) + 10);
 
