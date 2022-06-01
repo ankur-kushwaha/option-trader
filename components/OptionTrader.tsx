@@ -107,7 +107,7 @@ export default function OptionTrader() {
     if (stoplossHit.length > 0) {
       notifyMe("Stoploss hit...", {
         onClick: function () {
-          window.open("http://localhost:3000/#", "_blank")
+          window.open("https://kite.zerodha.com/positions", "_blank")
         }
       })
     }
@@ -115,7 +115,7 @@ export default function OptionTrader() {
     if (targethit.length > 0) {
       notifyMe("Target hit...", {
         onClick: function () {
-          window.open("http://localhost:3000/#", "_blank")
+          window.open("https://kite.zerodha.com/positions", "_blank")
         }
       })
     }
