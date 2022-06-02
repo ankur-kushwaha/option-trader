@@ -6,8 +6,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let {query} = req;
     let token = req.cookies.accessToken
     const searchParams = new URLSearchParams();
-    for(let instrument of query.instrument){
-      searchParams.append("i",instrument)
+    if(Array.isArray(query.instrument)){
+      for(let instrument of query.instrument){
+        searchParams.append("i",instrument)
+      }
+    }else{
+      searchParams.append("i",query.instrument)
     }
 
     let apiResponse = await fetch(`https://api.kite.trade/quote?${searchParams.toString()}`, {
@@ -16,7 +20,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "Authorization": `token ${API_KEY}:${token}`
       }
     })
+    
     let out = await apiResponse.json()
+    if(out.status!='success'){
+      console.log(out)
+    }
     res.status(200).json(out)
 }
    

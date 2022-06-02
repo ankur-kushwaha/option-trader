@@ -58,11 +58,6 @@ type Response = {
   }
 }
 
-type Instrument = {
-  tradingsymbol: string,
-  exchange: string
-}
-
 type UseQuoteResponse = {
   out: {
     [key: string]: Quote
@@ -75,7 +70,12 @@ type UseQuoteResponse = {
   }
 }
 
-export default function useQuotes(instruments): UseQuoteResponse {
+type Instrument = {
+  product:string,
+  tradingsymbol:string
+}
+
+export default function useQuotes(instruments:Instrument[]): UseQuoteResponse {
 
   const [quotes,setQuotes] = React.useState({
     out:{},
@@ -113,7 +113,7 @@ export default function useQuotes(instruments): UseQuoteResponse {
     }
 
     getQuotes();
-  },[])
+  },[instruments])
 
   return quotes
 

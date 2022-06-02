@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { getItem, setItem } from "../utils/storage";
-import PositionContext, { PositionActions } from "./context/PositionsContext";
+import { getItem, setItem } from "../../utils/storage";
+import PositionContext, { PositionActions } from "./PositionsContext";
 
 function FilterBlock({ header, options, onSelection }) {
 

@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Alert, Button, Col, Row } from 'react-bootstrap'
-import { getItem } from '../utils/storage'
-import PositionContext, { PositionActions, Stoploss } from './context/PositionsContext'
+import { getItem } from '../../utils/storage'
+import PositionContext, { PositionActions, Stoploss } from './PositionsContext'
 
 import { PositionFilters } from './PositionFilters'
-import Positions from './Positions'
+import Positions from './PositionsTable'
 
 function notifyMe(msg, { onClick }) {
   // Let's check if the browser supports notifications

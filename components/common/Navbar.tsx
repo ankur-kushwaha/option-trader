@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Nav, Navbar, NavbarBrand } from 'react-bootstrap';
-import { UserContext } from './context/UserContext';
+import { UserContext } from './UserContext';
 // import Navbar from 'react-bootstrap/Navbar'
 
 export default function NavigationBar() {
@@ -13,6 +13,7 @@ export default function NavigationBar() {
         <NavbarBrand href="/">Option Trader</NavbarBrand>
         <Nav className="me-auto">
           <Nav.Link href="/">Home</Nav.Link>
+          <Nav.Link href="/watchlist">WatchList</Nav.Link>
           <Nav.Link href="/positions">Positions</Nav.Link>
         </Nav>
         <Nav justify={true}>

@@ -4,18 +4,17 @@ import Image from 'next/image'
 import React, { useContext, useEffect } from 'react'
 import { API_KEY } from '../lib/constants'
 
+import OptionTrader from '../components/OptionTrader'
 import Navbar from '../components/common/Navbar'
 
 import '../styles/Home.module.css'
 import { Col, Container, Row } from 'react-bootstrap'
 import PositionContext, { PositionActions, PositionsProvder } from '../components/position/PositionsContext'
-import OptionTrader from '../components/position/OptionTrader'
+import WatchList from '../components/WatchList'
 
 type HomeProps = {
   positions:any
 }
-
-
 
 const Home: NextPage<HomeProps> = ({positions}) => {
 
@@ -32,9 +31,7 @@ const Home: NextPage<HomeProps> = ({positions}) => {
       <Container>
         <Row>
           <Col> 
-            <PositionsProvder initialValue={positions}>
-            <OptionTrader></OptionTrader>
-            </PositionsProvder>
+           <WatchList/>
           </Col>
         </Row>
       </Container>
@@ -60,29 +57,10 @@ export async function getServerSideProps({ req }) {
   let token = req.cookies.accessToken
 
   console.log(`token ${API_KEY}:${token}`);
-  let res = await fetch('https://api.kite.trade/portfolio/positions', {
-    headers: {
-      "X-Kite-Version": "3",
-      "Authorization": `token ${API_KEY}:${token}`
-    }
-  })
-  let out = await res.json()
-
-  if (out.status == 'error') {
-    return {
-      redirect: {
-        destination: '/api/login',
-        permanent: false,
-      }
-    }
-  }
-
-  console.log(3, out);
-
-
+  
   return {
     props: {
-      positions: out
+      
     }, // will be passed to the page component as props
   }
 }

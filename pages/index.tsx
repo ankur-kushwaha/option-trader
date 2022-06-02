@@ -4,12 +4,11 @@ import Image from 'next/image'
 import React, { useContext, useEffect } from 'react'
 import { API_KEY } from '../lib/constants'
 
-import OptionTrader from '../components/OptionTrader'
-import Navbar from '../components/Navbar'
+import Navbar from '../components/common/Navbar'
 
 import '../styles/Home.module.css'
 import { Col, Container, Row } from 'react-bootstrap'
-import PositionContext, { PositionActions, PositionsProvder } from '../components/context/PositionsContext'
+import PositionContext, { PositionActions, PositionsProvder } from '../components/position/PositionsContext'
 
 type HomeProps = {
   positions:any

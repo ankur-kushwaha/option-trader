@@ -4,16 +4,13 @@ type ColumnProps={
   changeSortOrder?:(selector:string)=>(event:MouseEvent)=>void,
   item?:any,
   children?:any,
+  name?:string,
   selector:string,
   onClick?:(event: MouseEvent)=>void
 }
 
-function Column({changeSortOrder,item}:ColumnProps){
+export function Column({changeSortOrder,item}:ColumnProps){
   return <th onClick={changeSortOrder && changeSortOrder(item.selector)} key={item.name}>{item.name}</th>
-}
-
-export {
-  Column
 }
 
 type TableProps = {
