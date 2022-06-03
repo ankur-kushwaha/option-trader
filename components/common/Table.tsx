@@ -1,26 +1,27 @@
-import React, { MouseEvent } from 'react'
+import React, { MouseEvent, ReactElement, ReactNode } from 'react'
 
-type ColumnProps={
+type TableProps<T> = {  
+  data:T[],
+  children?:ReactElement|ReactElement<ColumnProps<T>>[],
+  title?:string
+}
+
+type ColumnProps<T=any>={
   changeSortOrder?:(selector:string)=>(event:MouseEvent)=>void,
   item?:any,
-  children?:any,
+  children?:(arg0: T)=>ReactElement,
   name?:string,
-  selector:string,
+  selector:keyof T,
   onClick?:(event: MouseEvent)=>void
 }
 
-export function Column({changeSortOrder,item}:ColumnProps){
-  return <th onClick={changeSortOrder && changeSortOrder(item.selector)} key={item.name}>{item.name}</th>
+export function Column<T>({changeSortOrder,item}:ColumnProps<T>){
+  return <th onClick={changeSortOrder && changeSortOrder(item?.selector)} key={item.name}>{item.name}</th>
 }
 
-type TableProps = {
-  columns?:any,
-  data:any,
-  children?:any,
-  title?:any
-}
 
-export default function Table({columns,data,children=[],title=""}:TableProps){
+
+export default function Table<T>({data,children=[],title=""}:TableProps<T>){
   let [sortOrder,setSortOrder ] = React.useState({
     key:"test",
     order:true
@@ -37,7 +38,7 @@ export default function Table({columns,data,children=[],title=""}:TableProps){
     .map(item=>{
       for(let key in item){
         if(typeof item[key] == 'number'){
-          item[key] = item[key].toFixed(2)
+          item[key] = Number(item[key]).toFixed(2)
         }
       }
       return item;
@@ -69,21 +70,13 @@ export default function Table({columns,data,children=[],title=""}:TableProps){
 
       <table width={"100%"} className="table">
         <thead>
-          <tr>{
-            columns && columns.map(item=><th onClick={changeSortOrder(item.selector)} key={item.name}>{item.name}</th>)
-          }
+          <tr>
           {children && children.map((item,i)=><th onClick={changeSortOrder(item.props.selector)} key={i}>{item.props.name||item.props.selector}</th>)}
           </tr>
         </thead>
         <tbody>
           {data.map((item,i)=>
             <tr key={i}>
-              {columns && columns.map((cell,j)=>
-                <td key={j}>
-                  {cell.cell?<cell.cell {...item}/>:
-                    item[cell.selector]}
-                </td>)}
-
               {children && children.map((cell,j)=><td key={j}>
                 {cell.props.children ?cell.props.children(item) : item[cell.props.selector]}
               </td>)}

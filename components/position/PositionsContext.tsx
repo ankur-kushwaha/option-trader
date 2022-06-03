@@ -1,138 +1,134 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { getItem, setItem } from "../../utils/storage";
-
-export interface Position {
-  tradingsymbol: string;
-  exchange: string;
-  instrument_token: number;
-  product: string;
-  quantity: number;
-  change:number;
-  overnight_quantity: number;
-  multiplier: number;
-  average_price: number;
-  close_price: number;
-  last_price: number;
-  value: number;
-  pnl: number;
-  m2m: number;
-  unrealised: number;
-  realised: number;
-  buy_quantity: number;
-  buy_price: number;
-  buy_value: number;
-  buy_m2m: number;
-  sell_quantity: number;
-  sell_price: number;
-  sell_value: number;
-  sell_m2m: number;
-  day_buy_quantity: number;
-  day_buy_price: number;
-  day_buy_value: number;
-  day_sell_quantity: number;
-  day_sell_price: number;
-  day_sell_value: number;
-}
-
-export type Stoploss = {
-  value: number,
-  change: number,
-  trailStoploss:boolean
-}
-
-export type Target = {
-  value: number,
-  change: number,
-  step:number
-}
-
-type ProviderValue = {
-  state: {
-    positions: Position[],
-    stopLosses: {[key:string]:Stoploss},
-    targets:{[key:string]:Target},
-    optionTypesState?:{
-      pe:boolean,
-      ce:boolean
-    },
-    transactionTypesState?:{
-      buy:boolean,
-      sell:boolean
-    }
-
-  },
-  dispatch?: ({
-    type: PositionActions,
-    payload: any
-  }) => void
-}
-
-export enum PositionActions {
-  SET_POSITION_FILTERS="SET_POSITION_FILTERS",
-  SET_STOPLOSSES="SET_STOPLOSSES",
-  SET_TARGETS="SET_TARGETS",
-  SET_POSITIONS="SET_POSITIONS",
-}
+import { notifyMe } from "../common/notifyMe";
+import { AveragePrices, Filters, Position, PositionsTable, ProviderValue, Stoploss, Target } from "./types";
+import { usePositionData } from "./usePositionData";
 
 let PositionContext = React.createContext<ProviderValue>({
-  state: {
-    positions: [],
-    stopLosses:{},
-    targets:{}
-  }
+  filters:{
+    optionTypes: {},
+    transactionTypes: {}
+  },
+  positionsTableData: [],
+  stopLosses: {},
+  averagePrices: {},
+  targets: {}
 });
-
-function reducerFn(state:ProviderValue["state"], action):ProviderValue["state"] {
-  console.log('action',action);
-
-  switch (action.type) {
-    case PositionActions.SET_POSITIONS:{
-      return {
-        ...state,
-        positions:action.payload
-      }
-    }
-    case PositionActions.SET_POSITION_FILTERS:{
-
-      return {
-        ...state,
-        optionTypesState:action.payload.optionTypes,
-        transactionTypesState:action.payload.transactionTypes
-      }   
-    }
-    case PositionActions.SET_STOPLOSSES:{
-      setItem('stopLosses', action.payload)
-      return {
-        ...state,
-        stopLosses:action.payload
-      }
-    }
-    case PositionActions.SET_TARGETS:{
-      setItem('targets', action.payload)
-      return {
-        ...state,
-        targets:action.payload
-      }
-    }
-    default:
-      return state;
-  }
-}
 
 
 
 export function PositionsProvder({ children, initialValue }) {
-  let positions = initialValue.data.net.filter(item=>item.product=='NRML' && item.quantity!=0).map((item)=>{return {
-    ...item,
-    change:((item.last_price-item.average_price)/item.average_price*100).toFixed(2)
-  }})
-  const [state, dispatch] = useReducer(reducerFn, {
-    positions: positions,
-    targets:{},
-    stopLosses:{}
+
+  let [positions, setPositions] = React.useState<Position[]>(initialValue.data.net);
+  let [positionsTableData, setPositionsTableData] = React.useState<PositionsTable[]>([]);
+  let [filters,setFilters] = React.useState<Filters>({
+    optionTypes: {},
+    transactionTypes: {}
   });
+  let { averagePrices, setAveragePrice, setStopLoss, stopLosses, targets, setTarget } = usePositionData()
+
+  const checkForAlerts  = React.useCallback(()=>{
+    for(let item of positionsTableData){
+      let {hasStoplossHit} = item;
+      if(hasStoplossHit){
+        notifyMe("Stoploss hit.. "+item.tradingsymbol)
+      }
+      if(item.hasTargetHit){
+        notifyMe("[Stoploss]"+item.tradingsymbol)
+      }
+    }
+  },[positionsTableData])
+
+  const updateStoplosses = React.useCallback(()=>{
+    for(let item of positionsTableData){
+      if(item.quantity < 0){
+
+        let stopLoss = stopLosses[item.tradingsymbol].value;
+        let current = item.change;
+        let diff = stopLoss - current;
+        let newStoploss = stopLoss;
+        if(diff>10 ){
+          newStoploss = Number(current)+10;
+          setStopLoss(item.tradingsymbol,newStoploss);
+        }
+      }
+    }
+  },[positionsTableData, setStopLoss, stopLosses])
+
+  useEffect(() => {
+    let interval = setInterval(async () => {
+      let res = await fetch('/api/positions').then(res => res.json())
+      if (res) {
+        console.log('setPositions',res.data.net);
+        
+        setPositions(res.data.net)
+        checkForAlerts();
+        updateStoplosses()
+      }
+    }, 10000);
+    return () => {
+      clearInterval(interval)
+    }
+  }, [checkForAlerts, positions, updateStoplosses])
+
+  useEffect(() => {
+    let {optionTypes,transactionTypes} = filters;
+    const positionsTableData: PositionsTable[] = positions?.map(item => {
+      let instrument = item.tradingsymbol;
+
+      let averagePrice = averagePrices[item.tradingsymbol]?.price||item.average_price
+      let change = Number(((item.last_price - averagePrice) / item.average_price * 100).toFixed(2))
+      let hasStoplossHit = !!(stopLosses[item.tradingsymbol]?.value && stopLosses[item.tradingsymbol]?.value < change)
+      let hasTargetHit = !!(targets[item.tradingsymbol]?.value && targets[item.tradingsymbol]?.value > change)
+
+      return {
+        stopLoss: stopLosses[instrument],
+        tradingsymbol: instrument,
+        exchange: item.exchange,
+        product: item.product,
+        quantity: item.quantity,
+        change,
+        averagePrice:item.average_price,
+        updatedAveragePrice:{
+          price:averagePrice
+        },
+        lastPrice: item.last_price,
+        value: item.value,
+        pnl: (item.last_price-Number(averagePrice))*item.quantity,
+        target: targets[instrument],
+        hasStoplossHit,
+        hasTargetHit
+      }
+    }).filter(item => {
+      if (optionTypes?.ce && optionTypes?.pe) {
+        return true
+      }
+      if (optionTypes?.ce) {
+        return item.tradingsymbol.indexOf('CE') > -1
+      }
+      if (optionTypes?.pe) {
+        return item.tradingsymbol.indexOf('PE') > -1
+      }
   
-  return <PositionContext.Provider value={{ state, dispatch }}>
+      return true;
+    }).filter(item => {
+      if (transactionTypes?.buy && transactionTypes?.sell) {
+        return true;
+      }
+      if (transactionTypes?.buy) {
+        return item.quantity > 0
+      }
+      if (transactionTypes?.sell) {
+        return item.quantity < 0
+      }
+      return true;
+    });
+    
+    console.log('setPositionsTableData',positionsTableData);
+    setPositionsTableData(positionsTableData)
+  }, [averagePrices, filters, positions, stopLosses, targets])
+
+  return <PositionContext.Provider value={{ setFilters,filters, positionsTableData, averagePrices, setAveragePrice, setStopLoss, stopLosses, targets, setTarget }}>
     {children}
   </PositionContext.Provider>
 }

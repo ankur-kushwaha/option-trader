@@ -1,6 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { getItem, setItem } from "../../utils/storage";
-import PositionContext, { PositionActions } from "./PositionsContext";
+import PositionContext from "./PositionsContext";
+import { Filters } from "./types";
+
 
 function FilterBlock({ header, options, onSelection }) {
 
@@ -24,54 +26,34 @@ function FilterBlock({ header, options, onSelection }) {
       </label>
     </div>
     ))}
-
-
   </div>
 }
 
 
-type Filters = {
-  optionTypes: {
-
-  },
-  transactionTypes: {
-
-  }
-}
 
 export function PositionFilters() {
 
-  const [filters, setFilters] = useState<Filters>({
-    optionTypes: {},
-    transactionTypes: {}
-  })
+  let {filters,setFilters} = React.useContext(PositionContext);
 
-  const { state, dispatch } = useContext(PositionContext);
+  useEffect(() => {
+    let positionsFilters = getItem('positionFilters')
+    if(positionsFilters){
+      console.log('setFilters', positionsFilters);
+      setFilters && setFilters(positionsFilters);  
+    }
+  }, [setFilters])
 
-  function handleSelection(key, values) {
+  const handleSelection = React.useCallback((key, values)=> {
     let newFilters = {
       ...filters,
       [key]: values
     }
-    setFilters(newFilters)
+    
+    console.log('setFilters',newFilters);
+    setFilters && setFilters(newFilters)
     setItem('positionFilters', newFilters);
-    dispatch && dispatch({
-      type: PositionActions.SET_POSITION_FILTERS,
-      payload: newFilters
-    });
-  }
+  },[filters, setFilters])
 
-  useEffect(() => {
-    let positionsFilters = getItem('positionFilters')
-    console.log('positionsFilters', positionsFilters);
-    if(positionsFilters){
-      setFilters(positionsFilters);  
-      dispatch && dispatch({
-        type: PositionActions.SET_POSITION_FILTERS,
-        payload: positionsFilters
-      });
-    }
-  }, [])
 
   let transactionTypeOptions = [{ name: "Buy", value: "buy", selected: false }, { name: "Sell", "value": "sell", selected: false }]
   let optionTypes = [{ name: "CE", value: "ce", selected: false }, { name: "PE", "value": "pe" }]
