@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@adobe/react-spectrum": "^3.18.0",
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/icons-material": "^5.8.2",
+    "@mui/material": "^5.8.2",
     "axios": "^0.27.2",
     "kiteconnect": "^4.0.0",
     "mongoose": "^6.3.3",

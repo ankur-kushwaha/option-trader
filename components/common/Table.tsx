@@ -1,8 +1,8 @@
 import React, { MouseEvent, ReactElement, ReactNode } from 'react'
 
-type TableProps<T> = {  
-  data:T[],
-  children?:ReactElement|ReactElement<ColumnProps<T>>[],
+type TableProps = {  
+  data:any,
+  children?:ReactElement[]
   title?:string
 }
 
@@ -21,7 +21,7 @@ export function Column<T>({changeSortOrder,item}:ColumnProps<T>){
 
 
 
-export default function Table<T>({data,children=[],title=""}:TableProps<T>){
+export default function Table({data,children=[],title=""}:TableProps){
   let [sortOrder,setSortOrder ] = React.useState({
     key:"test",
     order:true

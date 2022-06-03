@@ -8,16 +8,20 @@ import Navbar from '../components/common/Navbar'
 
 import '../styles/Home.module.css'
 import { Col, Container, Row } from 'react-bootstrap'
-import PositionContext, {  PositionsProvder } from '../components/position/PositionsContext'
+import PositionContext, { PositionsProvder } from '../components/position/PositionsContext'
 import OptionTrader from '../components/position/OptionTrader'
+import Button from '@mui/material/Button';
 
 type HomeProps = {
-  positions:any
+  positions: any
 }
 
 
 
-const Home: NextPage<HomeProps> = ({positions}) => {
+
+
+
+const Home: NextPage<HomeProps> = ({ positions }) => {
 
   const [activeKey, setActiveKey] = React.useState(null);
   return (
@@ -28,18 +32,20 @@ const Home: NextPage<HomeProps> = ({positions}) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      
+
       <Container>
         <Row>
-          <Col> 
+          <Col>
+          <Button variant="contained">Hello World</Button>
             <PositionsProvder initialValue={positions}>
-            <OptionTrader></OptionTrader>
+              <OptionTrader></OptionTrader>
             </PositionsProvder>
+
           </Col>
         </Row>
       </Container>
 
-     
+
       <footer className={"footer"}>
         <a
           href="#"

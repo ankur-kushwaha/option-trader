@@ -12,6 +12,7 @@ async function generateSession(token) {
         'request_token': token,
         'checksum': shajs('sha256').update(`${API_KEY}${token}60960qn0cpdca5m4o5lymxpj05xz0hcl`).digest('hex')
     }
+    
     var formBody: string[] = [];
     for (var property in body) {
         var encodedKey = encodeURIComponent(property);
