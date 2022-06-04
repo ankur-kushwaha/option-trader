@@ -4,13 +4,13 @@ import Image from 'next/image'
 import React, { useContext, useEffect } from 'react'
 import { API_KEY } from '../lib/constants'
 
-import OptionTrader from '../components/OptionTrader'
+
 import Navbar from '../components/common/Navbar'
 
 import '../styles/Home.module.css'
-import { Col, Container, Row } from 'react-bootstrap'
-import PositionContext, { PositionActions, PositionsProvder } from '../components/position/PositionsContext'
-import WatchList from '../components/WatchList'
+import PositionContext, { PositionsProvder } from '../components/position/PositionsContext'
+import WatchList from '../components/watchlist/WatchList'
+
 
 type HomeProps = {
   positions:any
@@ -28,14 +28,9 @@ const Home: NextPage<HomeProps> = ({positions}) => {
       </Head>
       <Navbar />
       
-      <Container>
-        <Row>
-          <Col> 
-           <WatchList/>
-          </Col>
-        </Row>
-      </Container>
-
+      
+      <WatchList/>
+      
      
       <footer className={"footer"}>
         <a

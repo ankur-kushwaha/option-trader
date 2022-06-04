@@ -16,8 +16,6 @@ a {
   box-sizing: border-box;
 }
 
-
-
 .footer {
   margin-top:20px;
   display: flex;
@@ -33,31 +31,4 @@ a {
   justify-content: center;
   align-items: center;
   flex-grow: 1;
-}
-
-.filter-block {
-  border: 1px solid #dee2e6;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
-
-.navbar {
-  margin-bottom: 20px;
-}
-
-.table {
-  border-radius: 5px;
-}
-
-thead th {
-  font-size: 14px;
-
-}
-
-input {
-  border: 1px solid #dee2e6;
-  outline: none;
-  border-radius: 2px;
-  width: 100px;
 }

@@ -65,7 +65,7 @@ export function PositionsProvder({ children, initialValue }) {
         checkForAlerts();
         updateStoplosses()
       }
-    }, 10000);
+    }, 1000000);
     return () => {
       clearInterval(interval)
     }

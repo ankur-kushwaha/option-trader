@@ -7,8 +7,7 @@ import { API_KEY } from '../lib/constants'
 import Navbar from '../components/common/Navbar'
 
 import '../styles/Home.module.css'
-import { Col, Container, Row } from 'react-bootstrap'
-import PositionContext, { PositionActions, PositionsProvder } from '../components/position/PositionsContext'
+import PositionContext, { PositionsProvder } from '../components/position/PositionsContext'
 
 type HomeProps = {
   positions:any
@@ -27,15 +26,6 @@ const Home: NextPage<HomeProps> = ({positions}) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      
-      <Container>
-        <Row>
-          <Col> 
-            
-          </Col>
-        </Row>
-      </Container>
-
      
       <footer className={"footer"}>
         <a

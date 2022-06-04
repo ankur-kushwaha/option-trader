@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { Col, Row } from 'react-bootstrap'
-import useQuotes from './position/hooks/useQuotes'
+import useQuotes from '../common/hooks/useQuotes';
 import Table, { Column } from '../common/Table'
 
 let initialStocks = [{
@@ -84,7 +83,7 @@ export default function WatchList() {
       <Table data={stocks}>
         <Column selector={"tradingsymbol"} name={"Instrument"}></Column>
         <Column selector={"stockcode"} name="Quote">
-          {(row) => {
+          {(row:) => {
             return <>{quotes[row.tradingsymbol]?.last_price}</>
           }}
         </Column>

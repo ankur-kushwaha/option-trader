@@ -7,7 +7,6 @@ import { API_KEY } from '../lib/constants'
 import Navbar from '../components/common/Navbar'
 
 import '../styles/Home.module.css'
-import { Col, Container, Row } from 'react-bootstrap'
 import PositionContext, { PositionsProvder } from '../components/position/PositionsContext'
 import OptionTrader from '../components/position/OptionTrader'
 import Button from '@mui/material/Button';
@@ -33,17 +32,11 @@ const Home: NextPage<HomeProps> = ({ positions }) => {
       </Head>
       <Navbar />
 
-      <Container>
-        <Row>
-          <Col>
-          <Button variant="contained">Hello World</Button>
-            <PositionsProvder initialValue={positions}>
-              <OptionTrader></OptionTrader>
-            </PositionsProvder>
-
-          </Col>
-        </Row>
-      </Container>
+      <div>
+        <PositionsProvder initialValue={positions}>
+          <OptionTrader></OptionTrader>
+        </PositionsProvder>
+      </div>
 
 
       <footer className={"footer"}>
