@@ -1,5 +1,8 @@
 
-export function notifyMe(msg, { onClick }={onClick:null}) {
+type Options = {
+  onClick?:()=>void
+}
+export function notifyMe(msg, { onClick }:Options={}) {
     // Let's check if the browser supports notifications
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notification");
@@ -9,7 +12,7 @@ export function notifyMe(msg, { onClick }={onClick:null}) {
     else if (Notification.permission === "granted") {
       // If it's okay let's create a notification
       var notification = new Notification(msg);
-      if(onclick){
+      if(onClick){
         notification.addEventListener('click', onClick);
       }
       notification.close();

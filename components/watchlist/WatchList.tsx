@@ -48,8 +48,6 @@ export default function WatchList() {
 
   const [stocks, setStocks] = React.useState<Stock[]>(initialStocks);
 
-  let { out: quotes } = useQuotes(stocks)
-
   const [target, setTarget] = React.useState({
     "TATAPOWER": {
       price: 10
@@ -87,11 +85,6 @@ export default function WatchList() {
     <div>
       <Table<Stock> data={stocks}>
         <Column selector={"tradingsymbol"} name={"Instrument"}></Column>
-        <Column<Stock> selector={"stockcode"} name="Quote">
-          {(row) => {
-            return <>{quotes[row.tradingsymbol]?.last_price}</>
-          }}
-        </Column>
         <Column<Stock> selector={"stockcode"} name={"Target"}>
           {(row) => {
             return <>
