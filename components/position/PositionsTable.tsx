@@ -14,7 +14,7 @@ function Positions() {
 
   return (
     <div>
-      <Table title={"averagePrice"} data={positionsTableData}>
+      <Table data={positionsTableData}>
         <Column<PositionsTable> selector='tradingsymbol' name={"Instrument"}></Column>
         <Column selector='quantity' name='Quantity'></Column>
         <Column selector='averagePrice' name='Avg Price'></Column>

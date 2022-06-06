@@ -94,11 +94,11 @@ export function PositionsProvder({ children, initialValue }) {
         product: item.product,
         quantity: item.quantity,
         change,
-        averagePrice: quotes[item.tradingsymbol]?.depth.buy?.[0].price||0,
+        averagePrice: item.average_price,
         updatedAveragePrice: {
           price: averagePrice
         },
-        lastPrice: item.last_price,
+        lastPrice: quotes[item.tradingsymbol]?.depth.buy?.[0].price||0,
         value: item.value,
         pnl: Number(Number((item.last_price - Number(averagePrice)) * item.quantity).toFixed(2)),
         target: targets[instrument],
