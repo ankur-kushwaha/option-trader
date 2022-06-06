@@ -47,7 +47,7 @@ export function PositionsProvder({ children, initialValue }) {
     for (let item of positionsTableData) {
       if (item.quantity < 0) {
 
-        let stopLoss = stopLosses[item.tradingsymbol].value;
+        let stopLoss = stopLosses[item.tradingsymbol]?.value;
         let current = item.change;
         let diff = stopLoss - current;
         let newStoploss = stopLoss;
@@ -71,7 +71,7 @@ export function PositionsProvder({ children, initialValue }) {
   }, [checkForAlerts, updateStoplosses])
 
   useEffect(() => {
-    let interval = setInterval(refresh, 1000000);
+    let interval = setInterval(refresh, 10000);
     return () => {
       clearInterval(interval)
     }
