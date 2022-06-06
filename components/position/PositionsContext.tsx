@@ -132,9 +132,7 @@ export function PositionsProvder({ children, initialValue }) {
 
     console.log('setPositionsTableData', positionsTableData);
     setPositionsTableData(positionsTableData)
-  }, [averagePrices, filters, positions, stopLosses, targets])
-
-
+  }, [averagePrices, filters, positions, quotes, stopLosses, targets])
 
   return <PositionContext.Provider value={{ refresh, quotes, setFilters, filters, positionsTableData, averagePrices, setAveragePrice, setStopLoss, stopLosses, targets, setTarget }}>
     {children}
