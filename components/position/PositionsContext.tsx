@@ -94,7 +94,7 @@ export function PositionsProvder({ children, initialValue }) {
         product: item.product,
         quantity: item.quantity,
         change,
-        averagePrice: quotes[item.tradingsymbol].depth.buy?.[0].price||0,
+        averagePrice: quotes[item.tradingsymbol]?.depth.buy?.[0].price||0,
         updatedAveragePrice: {
           price: averagePrice
         },
