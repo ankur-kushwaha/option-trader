@@ -43,6 +43,48 @@ export type Target = {
   step: number
 }
 
+export interface Quote {
+  instrument_token: number;
+  timestamp: string;
+  last_trade_time: string;
+  last_price: number;
+  last_quantity: number;
+  buy_quantity: number;
+  sell_quantity: number;
+  volume: number;
+  average_price: number;
+  oi: number;
+  oi_day_high: number;
+  oi_day_low: number;
+  net_change: number;
+  lower_circuit_limit: number;
+  upper_circuit_limit: number;
+  ohlc: Ohlc;
+  depth: Depth;
+}
+
+export interface Ohlc {
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
+export interface Depth {
+  buy?: (BuyEntityOrSellEntity)[] | null;
+  sell?: (BuyEntityOrSellEntity)[] | null;
+}
+
+export interface BuyEntityOrSellEntity {
+  price: number;
+  quantity: number;
+  orders: number;
+}
+
+export type Quotes = {
+  [key:string]:Quote
+}
+
 export type PositionsTable = {
   tradingsymbol: string;
   exchange: string;
@@ -72,7 +114,9 @@ export type Filters = {
 }
 
 
+
 export type ProviderValue = {
+  refresh?:()=>void,
   positionsTableData: PositionsTable[],
   averagePrices: AveragePrices,
   setAveragePrice?: (instrument, price) => void,
@@ -81,7 +125,8 @@ export type ProviderValue = {
   stopLosses: { [key: string]: Stoploss },
   setStopLoss?: (instrument, price) => void,
   filters:Filters,
-  setFilters?:(filters:Filters)=>void
+  setFilters?:(filters:Filters)=>void,
+  quotes:Quotes
 }
 
 

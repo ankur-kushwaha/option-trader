@@ -1,4 +1,5 @@
 import React from 'react'
+import { Position, Quotes } from '../../position/types';
 
 
 /**
@@ -59,7 +60,7 @@ type Response = {
 }
 
 type UseQuoteResponse = {
-  out: {
+  quotes: {
     [key: string]: Quote
   },
   depth: {
@@ -70,51 +71,65 @@ type UseQuoteResponse = {
   }
 }
 
-type Instrument = {
-  product:string,
-  tradingsymbol:string
+export async function getQuotes(instruments: Position[]) {
+  let query = instruments.map(item => {
+    return {
+      tradingsymbol: item.tradingsymbol,
+      exchange: item.product == 'NRML' ? "NFO" : "NSE"
+    }
+  }).map(item => {
+    return `instrument=${item.exchange}:${item.tradingsymbol}`
+  }).join("&")
+  let response: Response = await fetch(`/api/quote?${query}`).then(res => res.json());
+  return response;
 }
 
-export default function useQuotes(instruments:Instrument[]): UseQuoteResponse {
+export function processKeyQuotes(data) {
+  let quotes: Quotes = {};
+  let depth = {}
+  for (let key of Object.keys(data)) {
+    let newKey = key.split(":")[1]
+    quotes[newKey] = data[key];
+    depth[newKey] = {
+      buy: data[key].depth.buy?.[0].price,
+      sell: data[key].depth.sell?.[0].price,
+    }
+  }
+  return {
+    quotes, depth
+  }
+}
 
-  const [quotes,setQuotes] = React.useState({
-    out:{},
-    depth:{}
+export default function useQuotes(instruments: Position[]): UseQuoteResponse {
+
+  const [{ quotes, depth }, setQuotes] = React.useState({
+    quotes: {},
+    depth: {}
   });
 
-  React.useEffect(()=>{
-    async function getQuotes(){
-      let query = instruments.map(item=>{
-        return {
-          tradingsymbol:item.tradingsymbol,
-          exchange:item.product=='NRML'?"NFO":"NSE"
-        }
-      }).map(item => {
-        return `instrument=${item.exchange}:${item.tradingsymbol}`
-      }).join("&")
-      let response: Response = await fetch(`/api/quote?${query}`).then(res => res.json());
-    
+  React.useEffect(() => {
+    async function processQuotes() {
+      let response = await getQuotes(instruments);
       let data = response.data;
-      let out = {};
-      let depth = {}
-      for (let key of Object.keys(data)) {
-        let newKey = key.split(":")[1]
-        out[newKey] = data[key];
-        depth[newKey] = {
-          buy: data[key].depth.buy?.[0].price,
-          sell: data[key].depth.sell?.[0].price,
-        }
-      }
+      let { quotes, depth } = processKeyQuotes(data);
 
+      console.log('setQuotes', {quotes,depth})
       setQuotes({
-        out,
+        quotes,
         depth
-      })
+      });
     }
 
-    getQuotes();
-  },[instruments])
+    processQuotes();
+  }, [instruments]);
 
-  return quotes
+  function refreshQuotes() {
+
+  }
+
+  return {
+    quotes,
+    depth
+  }
 
 }

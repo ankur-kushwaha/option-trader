@@ -21,7 +21,7 @@ function AddStockForm({ onAddStock }) {
     setInsrument(e.target?.value)
   }
 
-  function handleAddStock(){
+  function handleAddStock() {
     onAddStock(instrument);
     setInsrument("")
   }
@@ -39,9 +39,14 @@ function AddStockForm({ onAddStock }) {
   )
 }
 
+type Stock = {
+  tradingsymbol: string,
+  product: string
+}
+
 export default function WatchList() {
 
-  const [stocks, setStocks] = React.useState(initialStocks);
+  const [stocks, setStocks] = React.useState<Stock[]>(initialStocks);
 
   let { out: quotes } = useQuotes(stocks)
 
@@ -62,8 +67,8 @@ export default function WatchList() {
   }
 
   function handleAddStock(newStock) {
-    
-    if(!stocks.find(item=>item.tradingsymbol == newStock)){
+
+    if (!stocks.find(item => item.tradingsymbol == newStock)) {
       setStocks([...stocks, {
         tradingsymbol: newStock,
         product: "NSE"
@@ -80,30 +85,25 @@ export default function WatchList() {
 
   return (
     <div>
-      <Table data={stocks}>
+      <Table<Stock> data={stocks}>
         <Column selector={"tradingsymbol"} name={"Instrument"}></Column>
-        <Column selector={"stockcode"} name="Quote">
-          {(row:) => {
+        <Column<Stock> selector={"stockcode"} name="Quote">
+          {(row) => {
             return <>{quotes[row.tradingsymbol]?.last_price}</>
           }}
         </Column>
-        <Column selector={"stockcode"} name={"Target"}>
+        <Column<Stock> selector={"stockcode"} name={"Target"}>
           {(row) => {
             return <>
               <input type="number" value={target[row.tradingsymbol]?.price} onChange={(e) => updateTarget(row.tradingsymbol, e.target.value)} />
               {target[row.tradingsymbol]?.price}</>
           }}
         </Column>
-        <Column selector='stockcode'>
+        <Column<Stock> selector='stockcode'>
           {row => (<button onClick={() => deleteInsrument(row.tradingsymbol)} type="button" className="btn btn-primary">X</button>)}
         </Column>
       </Table>
-
-      <Row>
-        <Col>
-          <AddStockForm onAddStock={handleAddStock} />
-        </Col>
-      </Row>
+      <AddStockForm onAddStock={handleAddStock} />
     </div>
   )
 }

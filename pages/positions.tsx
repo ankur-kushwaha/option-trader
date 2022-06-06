@@ -10,19 +10,32 @@ import '../styles/Home.module.css'
 import PositionContext, { PositionsProvder } from '../components/position/PositionsContext'
 import OptionTrader from '../components/position/OptionTrader'
 import Button from '@mui/material/Button';
+import { createTheme, Drawer, Paper } from '@mui/material'
+import ClippedDrawer from '../components/common/Drawer'
+import { ThemeProvider } from '@emotion/react'
 
 type HomeProps = {
   positions: any
 }
 
 
-
-
-
+const darkTheme = createTheme({
+  palette: {
+    primary: {
+      main: '#3f51b5',
+    },
+    secondary: {
+      main: '#f50057',
+    },
+  },
+});
 
 const Home: NextPage<HomeProps> = ({ positions }) => {
 
   const [activeKey, setActiveKey] = React.useState(null);
+  let menus = [{
+    text: 'Position', link: "/positions"
+  }, { text: 'Watchlist', link: "/watchlist" }]
   return (
     <div className={""}>
       <Head>
@@ -31,25 +44,32 @@ const Home: NextPage<HomeProps> = ({ positions }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
+      <ThemeProvider theme={darkTheme}>
+        
+          <div>
 
-      <div>
-        <PositionsProvder initialValue={positions}>
-          <OptionTrader></OptionTrader>
-        </PositionsProvder>
-      </div>
+            <ClippedDrawer menus={menus}>
+              <PositionsProvder initialValue={positions}>
+                <OptionTrader></OptionTrader>
+              </PositionsProvder>
+            </ClippedDrawer>
+
+          </div>
 
 
-      <footer className={"footer"}>
-        <a
-          href="#"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={"logo"}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+          <footer className={"footer"}>
+            <a
+              href="#"
+              rel="noopener noreferrer"
+            >
+              Powered by{' '}
+              <span className={"logo"}>
+                <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+              </span>
+            </a>
+          </footer>
+        
+      </ThemeProvider>
     </div>
   )
 }
