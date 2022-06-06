@@ -122,6 +122,7 @@ export default function TableX<T>({data,children=[],title=""}:TableProps<T>){
     .map(item=>{
       for(let key in item){
         if(typeof item[key] == 'number'){
+          //@ts-ignore
           item[key] = Number(item[key]).toFixed(2)
         }
       }
